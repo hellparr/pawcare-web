@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: pawcare-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: pawcare
+      MYSQL_USER: pawcare
+      MYSQL_PASSWORD: pawcare123
+      MYSQL_ROOT_PASSWORD: root123
+    ports:
+      - "3306:3306"
+    volumes:
+      - pawcare_mysql:/var/lib/mysql
+  app:
+    build: .
+    container_name: pawcare-app
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/pawcare?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_USERNAME: pawcare
+      DB_PASSWORD: pawcare123
+      PORT: 8080
+volumes:
+  pawcare_mysql:
